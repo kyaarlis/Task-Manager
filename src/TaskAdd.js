@@ -2,22 +2,24 @@ import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from "react";
 import axios from 'axios';
+const {format} = require('date-fns');
 
 export default function AddTaskPage() {
     const [form, setForm] = useState({
-      start_date: new Date().toISOString().substr(0, 10)
+      start_date: format(new Date(),'yyyy-MM-dd')
     })
 
-    // this is where form data goes for validation and to be insered in DB
+    // Šeit veidlapas dati tiek izmantoti apstiprināšanai un ievietošanai DB
     const dbUrl = 'http://localhost:3004/projects'
     
-    // updates the form data as the user provides data
+    // Atjaunina veidlapas datus, kad lietotājs sniedz datus
     const handleChange = (event) => {
         const name = event.target.name
         const value = event.target.value
         setForm(values => ({...values, [name]: value}))
       }
 
+  // Nosūtam datus uz datubāzi 
   const handleSubmit = (event) => {
     event.preventDefault()
 
@@ -32,11 +34,11 @@ export default function AddTaskPage() {
   const todayBtn = () => {
     setForm({
     ...form,
-    dueDate: new Date().toISOString().substr(0, 10), 
+    dueDate: format(new Date(),'yyyy-MM-dd'), 
   })
   }
 
-  // page routing
+  // Lapu maršrutēšana
   const navigate = useNavigate()
 
   function handleClick() {
@@ -78,7 +80,7 @@ export default function AddTaskPage() {
                   setForm({
                     ...form,
                     dueDate: e.target.value,
-                    start_date: new Date().toISOString().substr(0, 10), 
+                    start_date: format(new Date(),'yyyy-MM-dd'), 
                   })
                 }} required/>
                 

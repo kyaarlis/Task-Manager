@@ -11,9 +11,7 @@ const LoginPage = () => {
     username: '',
     password: ''
   })
-
   const [users, setUsers] = useState([])
-
   const [loginFail, setLoginFail] = useState(false)
 
   const handleSubmit = (event) => {
@@ -32,6 +30,8 @@ const LoginPage = () => {
       }
     }; 
 
+  // Pieprasam visus lietotāju datus no datubāzes
+  // un ieliekam tos veidlapā
   const fetchAllUsers = () => {
     axios.get('http://localhost:3004/users').then((response) => {
       setUsers(response.data)
@@ -42,6 +42,7 @@ const LoginPage = () => {
     fetchAllUsers()
   }, [])
 
+  // Lapu maršrutēšana
   const navigate = useNavigate()
 
   function handleClick() {

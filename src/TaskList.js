@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Alert from 'react-bootstrap/Alert';
 import { Container, Row, Col, Button, Table, Form } from 'react-bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +16,7 @@ function TaskListPage() {
   // Šodienas datums
   const today = format(new Date(),'yyyy-MM-dd')
 
-  
+  // Saņem visus ierakstus par projektiem no datubāzes
   const fetchAllProjects = () => {
     axios.get('http://localhost:3004/projects').then((response) => {
   
@@ -23,13 +24,16 @@ function TaskListPage() {
     });
   }
 
+  // Izdzēš izvēlēto projektu no datubāzes
   const deleteProject = (projectId) => {
     axios.delete(`http://localhost:3004/projects/${projectId}`).then((response) => {
 
+      // kad projekts dzēsts tad pārlādējam lapu ar pāri palikušajiem projektiem
       fetchAllProjects();
     });
   };
 
+  // Sūta izmainītos datus par projektu uz datubāzi
   const editProject = (project) => {
     axios.put(`http://localhost:3004/projects/${project.id}`, {
       projectName: project.project_name,
@@ -41,6 +45,7 @@ function TaskListPage() {
     });
   }
 
+  // Ja projekts ir ticis rediģēts tad pārlādējam lapu ar jaunajām izmaiņām
   useEffect(() => {
     if (isUpdated) {
       fetchAllProjects();
@@ -55,7 +60,6 @@ function TaskListPage() {
 
   const fetchAllUsers = () => {
     axios.get('http://localhost:3004/users').then((response) => {
-
       // console.log(response.data)
     });
   }
@@ -70,8 +74,8 @@ function TaskListPage() {
   function handleClick() {
     navigate("../addtask")
   }
-
   
+  // Aizved uz login lapu
   const handleLogout = () => {
     navigate('/')
   }
@@ -103,9 +107,10 @@ function TaskListPage() {
       </Row>
       <Row>
         <Col>
-          <h2>Current Tasks</h2>
-
-      {tasks.length === 0 && <h2 className='no_tasks mt-3'>No tasks for now!</h2>}
+        {/* Ja nav neviens proejkts pievienots tad rādam paziņojumu */}
+        {tasks.length === 0 ?  <Alert variant='info'>
+          No tasks for now! Click 'Add new task' to add some :)
+        </Alert> : <h2>Current Tasks</h2>}
 
     <Table striped bordered hover className={tasks.length === 0 ? 'all-tasks-hidden' : 'all-tasks'}>
       <thead>
@@ -226,15 +231,17 @@ function TaskListPage() {
               }}>
                 Delete
               </Button>
-              <Button variant='warning' onClick={() => {
+            {editTask === false && <Button variant='warning' onClick={() => {
                 setEditedTasks(true)
                 setSelectedRow(task.id)
               }}>
                 Edit
-              </Button>
+              </Button>}
+              
               {selectedRow === task.id && (
               <Button style={{display: editTask ? 'block' : 'none'}} variant='info' onClick={() => {
                 editProject(task)
+                setEditedTasks(false)
                 setSelectedRow(null);
               }}>
                 Save

@@ -21,14 +21,12 @@ const SignUpPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Check if the username already exists
+    // Pārbauda vai lietotājvārds eksistē
     const existingUser = users.find(user => user.username === signUpForm.username);
     if (existingUser) {
       alert('Username already exists. Please choose a different username.');
       return;
     }
-
-    
 
     if (signUpForm.password === signUpForm.passwordRepeat) {
       try {

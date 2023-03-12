@@ -9,3 +9,11 @@
 .no_tasks {
   margin-left: 520px;
 }
+
+/* .logOutBtn {
+  margin-left: 40px;
+} */
+
+.all-tasks-hidden {
+  display: none;
+}

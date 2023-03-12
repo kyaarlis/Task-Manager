@@ -3,23 +3,29 @@ import { Container, Row, Col, Button, Table, Form } from 'react-bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './App.css'
+const {format} = require('date-fns');
 
 function TaskListPage() {
-  const [tasks, setTask] = useState([{}])
+  const [tasks, setTask] = useState([])
   const [editTask, setEditedTasks] = useState(false)
   const [isUpdated, setIsUpdated] = useState(false)
   const [selectedRow, setSelectedRow] = useState(null)
 
+  // Šodienas datums
+  const today = format(new Date(),'yyyy-MM-dd')
+
+  
   const fetchAllProjects = () => {
     axios.get('http://localhost:3004/projects').then((response) => {
-
-      setTask(response.data)
+  
+      setTask(response.data)  
     });
   }
-  console.log(editTask)
 
   const deleteProject = (projectId) => {
     axios.delete(`http://localhost:3004/projects/${projectId}`).then((response) => {
+
       fetchAllProjects();
     });
   };
@@ -47,16 +53,42 @@ function TaskListPage() {
     fetchAllProjects()
   }, [])
 
+  const fetchAllUsers = () => {
+    axios.get('http://localhost:3004/users').then((response) => {
+
+      // console.log(response.data)
+    });
+  }
+
+  useEffect(() => {
+    fetchAllUsers()
+  }, [])
+
   // page routing
   const navigate = useNavigate()
 
   function handleClick() {
-    navigate("addtask")
+    navigate("../addtask")
+  }
+
+  
+  const handleLogout = () => {
+    navigate('/')
   }
 
   return (
+    <div>
+      
     <Container>
+    <Row >
+      <Col className='d-flex justify-content-start'>
+      <Button className='mt-2 mb-2 logOutBtn' variant='outline-info' type='button' size="sm" onClick={handleLogout}>
+        Log Out
+        </Button>
+        </Col>
+      </Row>
       <Row>
+        
         <Col>
         <Row>
           <Col>
@@ -72,7 +104,10 @@ function TaskListPage() {
       <Row>
         <Col>
           <h2>Current Tasks</h2>
-          <Table striped bordered hover>
+
+      {tasks.length === 0 && <h2 className='no_tasks mt-3'>No tasks for now!</h2>}
+
+    <Table striped bordered hover className={tasks.length === 0 ? 'all-tasks-hidden' : 'all-tasks'}>
       <thead>
         <tr>
           <th>ID</th>
@@ -85,9 +120,6 @@ function TaskListPage() {
         </tr>
       </thead>
       
-      {!tasks.length ? <h2 className='no_tasks mt-3'>No tasks for now!</h2> : null}
-      
-
       <tbody>
         {tasks.map((task) => (
           <tr key={task.id}>
@@ -99,21 +131,22 @@ function TaskListPage() {
                   label={task.project_name}
                   className="mb-3"
                 >
-                  <Form.Control value={task.project_name} type="text" placeholder={task.project_name} 
-                  onChange={(e) => {
-                    const updatedTasks = tasks.map((t) => {
-                      if (t.id === task.id) {
-                        return {
-                          ...t,
-                          project_name: e.target.value,
-                        };
-                      } else {
-                        return t;
-                      }
-                    });
-                    setTask(updatedTasks);
-                  }}
-                     />
+                  <Form.Control  value={task.project_name} type="text" placeholder={task.project_name} 
+                      onChange={(e) => {
+                        const updatedTasks = tasks.map((t) => {
+                          if (t.id === task.id) {
+                            return {
+                              ...t,
+                              project_name: e.target.value,
+                            };
+                          } else {
+                            return t;
+                          }
+                        });
+                        setTask(updatedTasks);
+                      }}
+                    />
+
                 </FloatingLabel>
               ) : (
                 task.project_name
@@ -167,6 +200,7 @@ function TaskListPage() {
                       }
                     });
                     setTask(updatedTasks);
+                    
                   }}
                      />
                 </FloatingLabel>
@@ -174,7 +208,18 @@ function TaskListPage() {
                 task.due_date
               )}
             </td>
-            <td>{task.status}</td>
+            <td>
+              <Col className='d-flex justify-content-center'>
+                 <Button
+                  key={task.id}
+                  variant={task.due_date <= today ? 'success' : 'warning'}
+                  size="sm"
+                >
+                  {task.due_date <= today ? 'Done' : 'In progress'}
+                </Button>   
+              </Col>
+
+            </td>
             <td className='d-flex justify-content-lg-evenly'>
               <Button variant='danger' onClick={() => {
                 deleteProject(task.id)
@@ -203,6 +248,7 @@ function TaskListPage() {
         </Col>
       </Row>
     </Container>
+    </div>
   );
 }
 

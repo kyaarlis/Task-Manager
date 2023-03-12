@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import axios from 'axios';
 
 export default function AddTaskPage() {
-    const [form, setForm] = useState({})
-
+    const [form, setForm] = useState({
+      start_date: new Date().toISOString().substr(0, 10)
+    })
 
     // this is where form data goes for validation and to be insered in DB
     const dbUrl = 'http://localhost:3004/projects'
@@ -16,8 +17,6 @@ export default function AddTaskPage() {
         const value = event.target.value
         setForm(values => ({...values, [name]: value}))
       }
-
-    console.log(form)
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -30,11 +29,18 @@ export default function AddTaskPage() {
             });
   }
 
+  const todayBtn = () => {
+    setForm({
+    ...form,
+    dueDate: new Date().toISOString().substr(0, 10), 
+  })
+  }
+
   // page routing
   const navigate = useNavigate()
 
   function handleClick() {
-    navigate("/")
+    navigate("../tasks")
   }
 
   return (
@@ -76,7 +82,7 @@ export default function AddTaskPage() {
                   })
                 }} required/>
                 
-                  <Button variant='outline-secondary'>Today</Button>
+                  <Button variant='outline-secondary' onClick={todayBtn}>Today</Button>
                 
               </InputGroup>
             </Form.Group>

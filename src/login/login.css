@@ -1,0 +1,30 @@
+.login-contaier {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signup-form {
+    background-color: #fff;
+}
+
+.control {
+    background-color: rgb(200, 38, 38);
+}
+
+.form-control {
+    background-color: rgb(218, 218, 218);
+}
+
+.login-form {
+    border: 1.5px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: white;
+}
+
+.login-fail {
+    color: red;
+}
